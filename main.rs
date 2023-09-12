@@ -17,15 +17,15 @@ fn main() {
     // Filling the vector if points
     println!("Enter your points (введите точки)");
     for i in 0..quantity_of_points {
-
-        // Array of coordinates
-        let mut arr: [i32; 2] = [0, 0];
-        arr[0] = read_integer();
-        arr[1] = read_integer();
-        vec_points.push(arr)
+        let mut point = Point::new(0, 0);
+        point.x = read_integer();
+        point.y = read_integer();
+        vec_points.push(point);
     }
 
-    println!("{:?}", vec_points)
+    sort_vec_of_the_points_for_x(&mut vec_points);
+
+    println!("{:?}", vec_points);
 }
 
 fn read_integer() -> i32 {
@@ -44,16 +44,35 @@ fn read_integer() -> i32 {
     }
 }
 
+fn printing_the_plane_whith_points(vec_points: Vec<Point>) {
+    for i in 0..vec_points.len() {
+        
+    }
+}
+
+fn sort_vec_of_the_points_for_x(vec_points: &mut Vec<Point>) {
+    vec_points.sort_unstable_by(|a, b| a.x.cmp(&b.x));
+}
+
+fn sort_vec_of_the_points_for_y(vec_points: &mut Vec<Point>) {
+    vec_points.sort_unstable_by(|a, b| a.y.cmp(&b.y));
+}
+
+// Struct for points
+#[derive(Debug)]
 struct Point {
     x: i32,
     y: i32
 }
 
+// Metods for points
 impl Point {
+    // Constructor
     fn new(_x: i32, _y: i32) -> Point {
         Point { x: (_x), y: (_y) }
     }
 
+    // Distance between two points
     fn calculate_distance(&self, point: Point) -> f64 {
         (((point.x-self.x)*(point.x-self.x) + 
         (point.y-self.y)*(point.y-self.y)) as f64).sqrt()
