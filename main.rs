@@ -23,7 +23,7 @@ fn main() {
         vec_points.push(point);
     }
 
-    sort_vec_of_the_points_for_x(&mut vec_points);
+    printing_the_plane_whith_points(&mut vec_points);
 
     println!("{:?}", vec_points);
 }
@@ -44,9 +44,41 @@ fn read_integer() -> i32 {
     }
 }
 
-fn printing_the_plane_whith_points(vec_points: Vec<Point>) {
-    for i in 0..vec_points.len() {
-        
+fn printing_the_plane_whith_points(vec_points: &mut Vec<Point>) {
+    sort_vec_of_the_points_for_x(vec_points);
+    let min_x: i32 = vec_points[0].x;
+    let max_x: i32 = vec_points[vec_points.len()-1].x;
+
+    sort_vec_of_the_points_for_y(vec_points);
+    let min_y: i32 = vec_points[0].y;
+    let max_y: i32 = vec_points[vec_points.len()-1].y;
+
+    let mut vec_matrix: Vec<Vec<String>> = Vec::new();
+
+    for x in min_x..=max_x {
+        let mut vec_arr: Vec<String> = Vec::new();
+        for y in min_y..=max_y {
+           vec_arr.push(String::from(" "))
+        }
+        vec_matrix.push(vec_arr);
+    }
+    
+    for i in vec_points {
+        vec_matrix[(i.x-min_x) as usize][(i.y-min_y) as usize] = String::from("*");
+    }
+
+    print!("  ");
+    for i in min_x..=max_x {
+        print!("{} ", i)
+    }
+
+    println!();
+    for i in min_y..=max_y {
+        print!("{} ", i);
+        for j in 0..vec_matrix[(i-min_y) as usize].len() {
+            print!("{} ", vec_matrix[(i-min_y) as usize][j]);
+        }
+        println!();
     }
 }
 
