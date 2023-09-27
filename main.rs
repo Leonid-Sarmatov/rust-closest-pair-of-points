@@ -21,11 +21,10 @@ fn main() {
         point.x = read_integer();
         point.y = read_integer();
         vec_points.push(point);
+        println!("The point was saved (точка успешно записана)");
     }
 
     printing_the_plane_whith_points(&mut vec_points);
-
-    println!("{:?}", vec_points);
 }
 
 fn read_integer() -> i32 {
@@ -55,9 +54,9 @@ fn printing_the_plane_whith_points(vec_points: &mut Vec<Point>) {
 
     let mut vec_matrix: Vec<Vec<String>> = Vec::new();
 
-    for x in min_x..=max_x {
+    for x in min_y..=max_y {
         let mut vec_arr: Vec<String> = Vec::new();
-        for y in min_y..=max_y {
+        for y in min_x..=max_x {
            vec_arr.push(String::from(" "))
         }
         vec_matrix.push(vec_arr);
