@@ -64,7 +64,7 @@ fn printing_the_plane_whith_points(vec_points: &mut Vec<Point>) {
     }
     
     for i in vec_points {
-        vec_matrix[(i.x-min_x) as usize][(i.y-min_y) as usize] = String::from("*");
+        vec_matrix[(i.y-min_y) as usize][(i.x-min_x) as usize] = String::from("*");
     }
 
     print!("  ");
