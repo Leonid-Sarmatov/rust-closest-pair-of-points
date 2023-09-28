@@ -27,6 +27,59 @@ fn main() {
     printing_the_plane_whith_points(&mut vec_points);
 }
 
+fn recursive_seach_for_nearby_points(vec_points: Vec<Point>) -> Vec<Point> {
+    // Stopping recursion for length 3
+    if vec_points.len() == 3 {
+        let s1: f64 = vec_points[0].calculate_distance(&vec_points[1]);
+        let s2: f64 = vec_points[1].calculate_distance(&vec_points[2]);
+        let s3: f64 = vec_points[0].calculate_distance(&vec_points[2]);
+        let x: f64 = s1.min(s2).min(s3);
+
+        match x {
+            s1 => {
+                let mut res: Vec<Point> = Vec::new();
+                res.push(Point::new(vec_points[0].x, vec_points[0].y));
+                res.push(Point::new(vec_points[1].x, vec_points[1].y));
+                return res;
+            },
+        
+            s2 => {
+                let mut res: Vec<Point> = Vec::new();
+                res.push(Point::new(vec_points[1].x, vec_points[1].y));
+                res.push(Point::new(vec_points[2].x, vec_points[2].y));
+                return res;
+            },
+        
+            s3 => {
+                let mut res: Vec<Point> = Vec::new();
+                res.push(Point::new(vec_points[0].x, vec_points[0].y));
+                res.push(Point::new(vec_points[2].x, vec_points[2].y));
+                return res;
+            }
+        }
+    }
+
+    // Stopping recursion for length 2
+    if vec_points.len() == 2 {
+        let mut res: Vec<Point> = Vec::new();
+        res.push(Point::new(vec_points[0].x, vec_points[0].y));
+        res.push(Point::new(vec_points[1].x, vec_points[1].y));
+        return res;
+    }
+
+    // Sending halves of the vectors further into recursion
+    let a: Vec<Point> = recursive_seach_for_nearby_points(
+        (&vec_points[..(vec_points.len()/2)]).to_vec()
+    );
+    let b: Vec<Point> = recursive_seach_for_nearby_points(
+        (&vec_points[(vec_points.len()/2)..]).to_vec()
+    );
+
+    // Check the case when the nearest points are in different halves of the vector
+    let c: Vec<Points> = 
+    return Vec::new();
+}
+
 fn read_integer() -> i32 {
     loop {
         // Create string variable for read input
@@ -90,7 +143,7 @@ fn sort_vec_of_the_points_for_y(vec_points: &mut Vec<Point>) {
 }
 
 // Struct for points
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Point {
     x: i32,
     y: i32
@@ -99,13 +152,18 @@ struct Point {
 // Metods for points
 impl Point {
     // Constructor
-    fn new(_x: i32, _y: i32) -> Point {
+    fn new(_x: i32, _y: i32) -> Self {
         Point { x: (_x), y: (_y) }
     }
 
     // Distance between two points
-    fn calculate_distance(&self, point: Point) -> f64 {
+    fn calculate_distance(&self, point: &Point) -> f64 {
         (((point.x-self.x)*(point.x-self.x) + 
         (point.y-self.y)*(point.y-self.y)) as f64).sqrt()
+    }
+
+    // Equals of two points
+    fn equals(&self, point: &Point) -> bool {
+        self.x == point.x && self.y == point.y
     }
 }
