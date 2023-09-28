@@ -25,38 +25,39 @@ fn main() {
     }
 
     printing_the_plane_whith_points(&mut vec_points);
+    sort_vec_of_the_points_for_x(&mut vec_points);
+    println!("{:?}", recursive_seach_for_nearby_points(vec_points));
 }
 
 fn recursive_seach_for_nearby_points(vec_points: Vec<Point>) -> Vec<Point> {
     // Stopping recursion for length 3
     if vec_points.len() == 3 {
-        let s1: f64 = vec_points[0].calculate_distance(&vec_points[1]);
-        let s2: f64 = vec_points[1].calculate_distance(&vec_points[2]);
-        let s3: f64 = vec_points[0].calculate_distance(&vec_points[2]);
-        let x: f64 = s1.min(s2).min(s3);
-
-        match x {
-            s1 => {
+        let s1: f64 = vec_points[0].calculate_distance(vec_points[1].clone());
+        let s2: f64 = vec_points[1].calculate_distance(vec_points[2].clone());
+        let s3: f64 = vec_points[0].calculate_distance(vec_points[2].clone());
+        let x: f64 = s1.min(s2.min(s3));
+       
+            if x == s1 {
                 let mut res: Vec<Point> = Vec::new();
                 res.push(Point::new(vec_points[0].x, vec_points[0].y));
                 res.push(Point::new(vec_points[1].x, vec_points[1].y));
                 return res;
-            },
+            }
         
-            s2 => {
+            if x == s2 {
                 let mut res: Vec<Point> = Vec::new();
                 res.push(Point::new(vec_points[1].x, vec_points[1].y));
                 res.push(Point::new(vec_points[2].x, vec_points[2].y));
                 return res;
-            },
+            }
         
-            s3 => {
+            if x == s3 {
                 let mut res: Vec<Point> = Vec::new();
                 res.push(Point::new(vec_points[0].x, vec_points[0].y));
                 res.push(Point::new(vec_points[2].x, vec_points[2].y));
                 return res;
             }
-        }
+        
     }
 
     // Stopping recursion for length 2
@@ -75,9 +76,63 @@ fn recursive_seach_for_nearby_points(vec_points: Vec<Point>) -> Vec<Point> {
         (&vec_points[(vec_points.len()/2)..]).to_vec()
     );
 
+    //println!("{}", 79);
+    let x: f64 = a[0].calculate_distance(a[1].clone());
+    //println!("{}", 81);
+    let y: f64 = b[0].calculate_distance(b[1].clone());
+
     // Check the case when the nearest points are in different halves of the vector
-    let c: Vec<Points> = 
-    return Vec::new();
+    let c: Vec<Point> = confluence(
+        &vec_points,
+        (vec_points[vec_points.len()/2-1].x + 
+        vec_points[vec_points.len()/2].x) as f64/2.0,
+        x.min(y)
+    );
+
+    let z: f64 = c[0].calculate_distance(c[1].clone());
+
+    let _min: f64 = (x.min(y)).min(z);
+    if _min == x { return a;}
+    if _min == y { return b;}
+    return c;
+    
+}
+
+fn confluence(vec_points: &Vec<Point>, mu: f64, s: f64) -> Vec<Point> {
+    // Create the resulting points between which the distance will be the shortest
+    let mut r1: Point = Point::new(i32::MAX, i32::MIN);
+    let mut r2: Point = Point::new(i32::MIN, i32::MAX);
+
+    // Create vector for points falling into the scatter
+    let mut zip_vector: Vec<Point> = vec_points
+        .iter()
+        .filter(|i| i.x as f64 >= mu-0.5*s && i.x as f64 <= mu+0.5*s)
+        .cloned()
+        .collect();
+
+    // Sort this vector along the Y axis
+    sort_vec_of_the_points_for_y(&mut zip_vector);
+
+    if zip_vector.len() != 0 {
+        let mut _min: f64 = s;
+        for i in 0..zip_vector.len().wrapping_sub(1) {
+            //println!("{}", 123);
+            if _min > zip_vector[i].calculate_distance(zip_vector[i+1].clone()) {
+                r1.x = zip_vector[i].x;
+                r1.y = zip_vector[i].y;
+
+                r2.x = zip_vector[i+1].x;
+                r2.y = zip_vector[i+1].y;
+
+                _min = zip_vector[i].calculate_distance(zip_vector[i+1].clone());
+            }
+        }
+    }
+    let mut result: Vec<Point> = Vec::new();
+    result.push(r1);
+    result.push(r2);
+
+    return result;
 }
 
 fn read_integer() -> i32 {
@@ -157,9 +212,15 @@ impl Point {
     }
 
     // Distance between two points
-    fn calculate_distance(&self, point: &Point) -> f64 {
-        (((point.x-self.x)*(point.x-self.x) + 
-        (point.y-self.y)*(point.y-self.y)) as f64).sqrt()
+    fn calculate_distance(&self, point: Point) -> f64 {
+        //println!("{}, {}, {}, {}\n", self.x, self.y, point.x, point.y);
+        //(((point.x-self.x)*(point.x-self.x) + 
+        //(point.y-self.y)*(point.y-self.y)) as f64).sqrt()
+
+        let dx = point.x.wrapping_sub(self.x);
+        let dy = point.y.wrapping_sub(self.y);
+
+        ((dx.wrapping_mul(dx) + dy.wrapping_mul(dy)) as f64).sqrt()
     }
 
     // Equals of two points
